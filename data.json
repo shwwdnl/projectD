@@ -1,0 +1,23 @@
+[
+  {
+    "fields": {
+      "name": "Смартфоны",
+      "description": null
+    },
+    "model": "catalog.category",
+    "pk": 9
+  },
+  {
+    "fields": {
+      "name": "iphone 11",
+      "description": null,
+      "image": "",
+      "category": 9,
+      "price": 55000,
+      "created_at": "2023-12-03T10:04:18.910Z",
+      "mod_at": "2023-12-03T10:04:18.910Z",
+      "owner": "Apple"
+    },
+    "model": "catalog.product",
+    "pk": 4
+  }]
