@@ -10,6 +10,13 @@ def home(request):
     }
     return render(request, 'main/home.html', context)
 
+def product(request):
+    product_list = Product.objects.all()
+    context = {
+        'object_list': product_list,
+    }
+    return render(request, 'main/product.html', context)
+
 def contacts(request):
     if request.method == "POST":
         name = request.POST.get('name')
