@@ -1,4 +1,4 @@
-{% extends 'main/base.html' %}
+{% extends 'catalog/base.html' %}
 {% load my_tags %}
 
 {% block content %}
@@ -10,7 +10,6 @@
         {% for object in object_list %}
         <div class="col-3">
             <div class="card mb-4 box-shadow">
-                <img src="{% media_tag object.image %}" class="img-fluid">
                 <div class="card-header">
                     <h4 class="my-0 font-weight-normal">{{ object.category }}</h4>
                 </div>
@@ -19,7 +18,7 @@
                     <ul class="list-unstyled mt-3 mb-4 text-start m-3">
                         <li> Цена - {{ object.price }} р</li>
                     </ul>
-                    <a class="p-2 btn btn-outline-primary" href="/product/">Подробнее</a>
+                    <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:product' object.pk %}">Подробнее</a>
                 </div>
             </div>
         </div>
