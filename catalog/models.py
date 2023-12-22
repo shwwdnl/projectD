@@ -29,9 +29,26 @@ class Product(models.Model):
     created_at = models.DateTimeField(**NULLABLE, auto_now_add=True, verbose_name='Дата создания')
     mod_at = models.DateTimeField(**NULLABLE, auto_now=True, verbose_name='Дата изменения')
     owner = models.CharField(max_length=100, verbose_name='продавец', **NULLABLE)
+
     def __str__(self):
         return f'{self.name} ({self.price})'
 
     class Meta:
         verbose_name = 'продукт'
         verbose_name_plural = 'продукты'
+
+
+class Version(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Продукт')
+    version_num = models.CharField(max_length=30, verbose_name='Номер версии')
+    version_name = models.CharField(max_length=150, verbose_name='Название версии')
+    version_indication = models.BooleanField(default=False, verbose_name='Текущая версия')
+
+    def __str__(self):
+        return f'{self.product} ({self.version_num})'
+
+    class Meta:
+        verbose_name = 'Версия'
+        verbose_name_plural = 'Версии'
+
+

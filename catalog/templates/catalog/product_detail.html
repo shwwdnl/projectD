@@ -13,11 +13,19 @@
         </div>
         <div class="col-md-6">
             <h2><p>{{ object.name }}</p></h2>
-            <big><p> Категория: <b>{{ object.category }}</b></p></big>
-            <big><p> Описание: <b>{{ object.description }} </b></p></big>
-            <big><p> Цена: <b>{{ object.price }}</b></p></big>
+            <big><p> Категория: <b> {{ object.category }} </b></p></big>
+            <big><p> Описание: <b> {{ object.description }} </b></p></big>
+            <big><p> Цена: <b> {{ object.price }} </b></p></big>
+                <p class="card-text">Активная версия: {{ object.version_num }}</p>
+                <p class="card-text">Информация о версии: {{ object.version_name }}</p>
+
             <button type="button" class="w-100 btn btn-lg btn-success my-2">Купить</button>
-        </div>
+            <button type="button" class="w-100 btn btn-lg btn-success my-2">
+                <a class="w-100 btn btn-lg btn-success my-2" href="{% url 'catalog:update_product' object.pk %}">Изменить продукт</a>
+            <button type="button" class="w-100 btn btn-lg btn-success my-2">
+                <a class="w-100 btn btn-lg btn-success my-2" href="{% url 'catalog:delete_product' object.pk %}">Удалить продукт</a>
+
+
     </div>
 </div>
 {% endblock %}
