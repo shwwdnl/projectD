@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 
     'catalog',
     'blog',
+    'users'
 ]
 
 MIDDLEWARE = [
@@ -133,3 +134,13 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'users.User'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'projectdprojectd5@gmail.com'
+EMAIL_HOST_PASSWORD = 'qwem9wh84'
+EMAIL_PORT = 587
