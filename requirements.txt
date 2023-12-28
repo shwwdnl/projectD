@@ -1,6 +1,6 @@
 asgiref==3.7.2
 Django==4.2.7
-sqlparse==0.4.4
-psycopg2-binary
+which parse==0.4.4
 Pillow
 ipython
+psycopg2-binary
