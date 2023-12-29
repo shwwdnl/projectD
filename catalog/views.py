@@ -1,15 +1,40 @@
-from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.forms import inlineformset_factory
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, TemplateView, CreateView, UpdateView, DeleteView
 
 from catalog.forms import ProductForm, VersionForm
-from catalog.models import Product
+from catalog.models import Product, Category, Version
 
-class ProductListView(ListView):
+
+class ProductListView(LoginRequiredMixin, ListView):
     model = Product
     extra_context = {
         'title': 'Главная страница',
     }
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_staff:
+            queryset = super().get_queryset().order_by('-created_at', 'pk')[:5]
+        else:
+            queryset = super().get_queryset().filter(
+            )
+        return queryset
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        for product in context['object_list']:
+            active_version = Version.objects.filter(product=product, version_indication=True).last()
+            if active_version:
+                product.active_version_number = active_version.version_num
+                product.active_version_name = active_version.version_name
+            else:
+                product.active_version_number = None
+                product.active_version_name = None
+
+        return context
 
 
 class ProductDetailView(DetailView):
@@ -17,6 +42,19 @@ class ProductDetailView(DetailView):
     extra_context = {
         'title': 'Товар',
     }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        active_version = Version.objects.filter(product=self.object, version_indication=True).last()
+        if active_version:
+            context['active_version_number'] = active_version.version_num
+            context['active_version_name'] = active_version.version_name
+        else:
+            context['active_version_number'] = None
+            context['active_version_name'] = None
+
+        return context
 
 
 class ContactsView(TemplateView):
@@ -34,7 +72,7 @@ class ContactsView(TemplateView):
         return render(request, 'catalog/contacts.html', self.extra_context)
 
 
-class CreateProductView(CreateView):
+class CreateProductView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy('catalog:home')
@@ -55,10 +93,11 @@ class CreateProductView(CreateView):
         return super().form_valid(form)
 
 
-class UpdateProductView(UpdateView):
+class UpdateProductView(LoginRequiredMixin,PermissionRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
     template_name = 'catalog/product_update.html'
+    permission_required = 'catalog.change_product'
     success_url = reverse_lazy('catalog:home')
     extra_context = {
         'title': 'Изменить товар',
@@ -71,10 +110,25 @@ class UpdateProductView(UpdateView):
             self.object.save()
         return super().form_valid(form)
 
-    def get_success_url(self):
-        return reverse('catalog:detail_product', args=[self.object.pk])
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_staff:
+            return redirect(reverse('catalog:home'))
+        return self.object
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        VersionFormSet = inlineformset_factory(Product, Version, form=VersionForm, extra=1)
+        if self.request.method == 'POST':
+            context_data['formset'] = VersionFormSet(self.request.POST, instance=self.object)
+        else:
+            context_data['formset'] = VersionFormSet(instance=self.object)
+        return context_data
 
 
-class DeleteProductView(DeleteView):
+
+
+class DeleteProductView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Product
+    permission_required = 'catalog.delete_product'
     success_url = reverse_lazy('catalog:home')
