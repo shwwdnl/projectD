@@ -145,3 +145,11 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'projectdprojectd5@gmail.com'
 EMAIL_HOST_PASSWORD = 'qwem9wh84'
 EMAIL_PORT = 587
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379",
+    }
+}
+
