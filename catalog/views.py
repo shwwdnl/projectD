@@ -3,9 +3,11 @@ from django.forms import inlineformset_factory
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, TemplateView, CreateView, UpdateView, DeleteView
+from django.core.cache import cache
 
 from catalog.forms import ProductForm, VersionForm
 from catalog.models import Product, Category, Version
+from config import settings
 
 
 class ProductListView(LoginRequiredMixin, ListView):
@@ -43,18 +45,8 @@ class ProductDetailView(DetailView):
         'title': 'Товар',
     }
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
 
-        active_version = Version.objects.filter(product=self.object, version_indication=True).last()
-        if active_version:
-            context['active_version_number'] = active_version.version_num
-            context['active_version_name'] = active_version.version_name
-        else:
-            context['active_version_number'] = None
-            context['active_version_name'] = None
 
-        return context
 
 
 class ContactsView(TemplateView):
